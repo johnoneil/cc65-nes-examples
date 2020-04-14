@@ -151,6 +151,8 @@ void main(void)
     static int player_pos_x = 128, player_pos_y = 216;
     static int player_v_x = 0, player_v_y = 0;
     const static signed int g = 1;
+    static unsigned char b = 0, prev_b = 0, a = 0, prev_a = 0;
+    static unsigned char debounced_a = 0, debounced_b = 0;
     //rendering is disabled at the startup, and palette is all black
     
     pal_bg(palette);//set background palette from an array
@@ -179,15 +181,22 @@ void main(void)
 
         set_vram_update(NULL);//disable update just in case, not really needed in this example
 
-		pad=pad_poll(0);//move the sprite around
+		pad = pad_poll(0);
 
-        if(pad & PAD_B && player_pos_y == 216)
+        a = pad & PAD_A;
+        debounced_a = (!prev_a) && a;
+        prev_a = a;
+        b = pad & PAD_B;
+        debounced_b = (!prev_b) && b;
+        prev_b = b;
+
+        if(debounced_b && player_pos_y == 216)
         {
             // Initiate a jump if not already jumping
             player_v_y = 10;
         }
 
-		if(pad&PAD_LEFT)
+		if( pad & PAD_LEFT )
         {
             if(player_pos_x > 0)
             {
@@ -207,6 +216,7 @@ void main(void)
             
         }
 
+        // Update player position due to velocity/gravity
         player_pos_y -= player_v_y;
         player_v_y -= g;
 
