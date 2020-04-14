@@ -148,9 +148,13 @@ void main(void)
     static unsigned int level_y = 0;
     static int scroll_pos = 0;
     static unsigned char pad;
+    static int player_pos_x = 128, player_pos_y = 216;
+    static int player_v_x = 0, player_v_y = 0;
+    const static signed int g = 1;
     //rendering is disabled at the startup, and palette is all black
     
     pal_bg(palette);//set background palette from an array
+    pal_col(17,0x30);//white color for sprite
 
     update_list[0]=0x20|NT_UPD_HORZ;//horizontal update sequence, dummy address
     update_list[1]=0x00;
@@ -177,10 +181,42 @@ void main(void)
 
 		pad=pad_poll(0);//move the sprite around
 
-		//if(pad&PAD_LEFT)  if(sprite_x>4)   sprite_x-=2;
-		if( pad & PAD_RIGHT ) ++scroll_pos;
-		//if(pad&PAD_UP)    if(sprite_y>4)   sprite_y-=2;
-		//if(pad&PAD_DOWN)  if(sprite_y<236) sprite_y+=2;
+        if(pad & PAD_B && player_pos_y == 216)
+        {
+            // Initiate a jump if not already jumping
+            player_v_y = 10;
+        }
+
+		if(pad&PAD_LEFT)
+        {
+            if(player_pos_x > 0)
+            {
+                --player_pos_x;
+            }
+        }
+		if( pad & PAD_RIGHT )
+        {
+            if(player_pos_x < 128)
+            {
+                ++player_pos_x;
+            }
+            else
+            {
+                ++scroll_pos;
+            }
+            
+        }
+
+        player_pos_y -= player_v_y;
+        player_v_y -= g;
+
+        if(player_pos_y >= 216)
+        {
+            player_pos_y = 216;
+            player_v_y = 0;
+        }
+
+        oam_spr(player_pos_x, player_pos_y, 0x1 ,0,0);//display sprite
 
         scroll(scroll_pos, 0);//scroll value will be applied on the next nmi as well
     }
