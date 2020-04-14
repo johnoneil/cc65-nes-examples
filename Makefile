@@ -19,6 +19,7 @@ TARGETS += example8.nes
 TARGETS += example9.nes
 TARGETS += example10.nes
 TARGETS += example11.nes
+TARGETS += example12.nes
 
 EMULATOR ?= higan
 
