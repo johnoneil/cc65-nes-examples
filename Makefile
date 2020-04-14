@@ -62,3 +62,6 @@ clean:
 %.nes: %.o crt0.o
 	$(LD) -C nrom_128_horz.cfg -o $@ $^ $(TARGET_PLATFORM).lib
 
+example12.nes: example12.o crt0.o
+	$(LD) -C nrom_128_vert.cfg -o $@ $^ $(TARGET_PLATFORM).lib
+

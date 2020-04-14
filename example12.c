@@ -147,6 +147,7 @@ void main(void)
     unsigned int level_pos = 0;
     static unsigned int level_y = 0;
     static int scroll_pos = 0;
+    static unsigned char pad;
     //rendering is disabled at the startup, and palette is all black
     
     pal_bg(palette);//set background palette from an array
@@ -174,37 +175,13 @@ void main(void)
 
         set_vram_update(NULL);//disable update just in case, not really needed in this example
 
-        #if 0
-        if(!(level_y&7))//put new row every 8 pixels
-        {
-            name_row=(scroll_y>>3)+59;//update row just above the visible part of the screen
-
-            if(name_row>=60) name_row-=60;//keep the row number within the limits
-
-            prepare_row_update(name_row,level_y>>4);
-
-            set_vram_update(update_list);//the update is handled at next NMI
-        }
-        #endif
-
-        scroll(scroll_pos, 0);//scroll value will be applied on the next nmi as well
-        ++scroll_pos;
-        #if 0
-
-        if(level_y>=LEVEL_HEIGHT) level_y=0;//loop the level
-
-        --scroll_y;
-
-        if(scroll_y<0) scroll_y=240*2-1;//keep Y within the total height of two nametables
-        #endif
-
-        #if 0
 		pad=pad_poll(0);//move the sprite around
 
-		if(pad&PAD_LEFT)  if(sprite_x>4)   sprite_x-=2;
-		if(pad&PAD_RIGHT) if(sprite_x<252) sprite_x+=2;
-		if(pad&PAD_UP)    if(sprite_y>4)   sprite_y-=2;
-		if(pad&PAD_DOWN)  if(sprite_y<236) sprite_y+=2;
-        #endif
+		//if(pad&PAD_LEFT)  if(sprite_x>4)   sprite_x-=2;
+		if( pad & PAD_RIGHT ) ++scroll_pos;
+		//if(pad&PAD_UP)    if(sprite_y>4)   sprite_y-=2;
+		//if(pad&PAD_DOWN)  if(sprite_y<236) sprite_y+=2;
+
+        scroll(scroll_pos, 0);//scroll value will be applied on the next nmi as well
     }
 }
